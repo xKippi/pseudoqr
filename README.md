@@ -14,7 +14,7 @@ The adjustable parameters are located in the section denoted with `--- BEGIN CON
 If you find a bug you can keep it! Just kidding, please create an issue in this repository.
 
 # QR Code Version
-The QR Code version is basically just a paraphrase for the size of a QR Code. For example, a version 1 QR Code is 21 x 21 modules (a module is just a black dot). For more information and a list describing the size and data storage capabilities of different QR Code Version see [https://www.qrcode.com/en/about/version.html](https://www.qrcode.com/en/about/version.html).
+The QR Code version is basically just a paraphrase for the size of a QR Code. For example, a version 1 QR Code is 21 x 21 modules (a module is just a black dot). For more information and a list describing the size and data storage capabilities of different QR Code version see [https://www.qrcode.com/en/about/version.html](https://www.qrcode.com/en/about/version.html).
 
 # Disclaimer
 The script here is only provided for educational purposes. I am not responsible for anything **you** decide to do with this script.
