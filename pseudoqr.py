@@ -49,14 +49,9 @@ filename = None
 # DO NOT EDIT BELOW THIS LINE IF YOU DO NOT KNOW WHAT YOU ARE DOING
 
 EDGE_MODULES = 7
-EDGE_SIZE = EDGE_MODULES * module_size
 
 ALIGNMENT_MODULES = 5
-ALIGNMENT_SIZE = ALIGNMENT_MODULES * module_size
-
 ALIGNMENT_PADDING = 4
-ALIGNMENT_PADDING_SIZE = ALIGNMENT_PADDING * module_size
-
 ALIGNMENT_MAX_SPACE = 23
 
 STDOUT_FILENAME = "-"
@@ -217,7 +212,7 @@ def main():
             if int.from_bytes(os.urandom(1), "big") > 127:
                 draw_module(i + margin_size, j + margin_size, foreground_pixel, pixels)
 
-    edge_position = size - margin_size - EDGE_SIZE
+    edge_position = (modules - EDGE_MODULES) * module_size + margin_size
     draw_dot(margin_size, margin_size, EDGE_MODULES, pixels, Direction.DOWN | Direction.RIGHT)
     draw_dot(margin_size, edge_position, EDGE_MODULES, pixels, Direction.DOWN | Direction.LEFT)
     draw_dot(edge_position, margin_size, EDGE_MODULES, pixels, Direction.UP | Direction.RIGHT)
@@ -226,7 +221,8 @@ def main():
         draw_dot(edge_position, edge_position, EDGE_MODULES, pixels, Direction.UP | Direction.LEFT)
 
     if symbol_version > 1:
-        base_alignment_position = size - margin_size - ALIGNMENT_PADDING_SIZE - ALIGNMENT_SIZE
+        base_alignment_position = (modules - ALIGNMENT_PADDING - ALIGNMENT_MODULES) * module_size + margin_size
+        alignment_padding_with_margin = margin_size + ALIGNMENT_PADDING * module_size
 
         alignment_count = math.ceil((modules - 2 * ALIGNMENT_PADDING + ALIGNMENT_MAX_SPACE)/(ALIGNMENT_MAX_SPACE + ALIGNMENT_MODULES))
         space = round((modules - 2 * ALIGNMENT_PADDING - alignment_count * ALIGNMENT_MODULES)/(alignment_count-1))
@@ -239,10 +235,10 @@ def main():
                     draw_dot(base_alignment_position - ((space + ALIGNMENT_MODULES) * i) * module_size, base_alignment_position - ((space + ALIGNMENT_MODULES) * j) * module_size, ALIGNMENT_MODULES, pixels)
 
         for i in range(1, alignment_count - 1):
-            draw_dot(margin_size + ALIGNMENT_PADDING_SIZE, base_alignment_position - ((space + ALIGNMENT_MODULES) * i) * module_size, ALIGNMENT_MODULES, pixels)
+            draw_dot(alignment_padding_with_margin, base_alignment_position - ((space + ALIGNMENT_MODULES) * i) * module_size, ALIGNMENT_MODULES, pixels)
 
         for i in range(1, alignment_count - 1):
-            draw_dot(base_alignment_position - ((space + ALIGNMENT_MODULES) * i) * module_size, margin_size + ALIGNMENT_PADDING_SIZE, ALIGNMENT_MODULES, pixels)
+            draw_dot(base_alignment_position - ((space + ALIGNMENT_MODULES) * i) * module_size, alignment_padding_with_margin, ALIGNMENT_MODULES, pixels)
 
     create_image(filename, pixels)
 
