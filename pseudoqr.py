@@ -26,8 +26,11 @@ module_size = 4
 # The width of the margin surrounding the qr code in modules
 margin = 4
 
-# The qr code symbol version to use. See http://www.qrcode.com/en/about/version.html for details
+# The qr code symbol version to use. See http://www.qrcode.com/en/about/version.html for details. This option is mutually exclusive with modules
 symbol_version = None
+
+# The number of modules to use in each direction (horizontally and vertically). This option is mutually exclusive with symbol_version
+modules = None
 
 # RGB value to use as foreground
 foreground_pixel = [0, 0, 0]
@@ -121,7 +124,7 @@ def draw_dot(x, y, size, pixels, padding_direction=0):
 
 
 def main():
-    global module_size, margin, symbol_version, foreground_pixel, background_pixel, draw_fourth_edge, image_format, filename
+    global module_size, margin, symbol_version, modules, foreground_pixel, background_pixel, draw_fourth_edge, image_format, filename
     parser = argparse.ArgumentParser(description='Create a image which looks like a qr code but is unscanable')
     parser.add_argument('-s',
                         '--module-size',
@@ -147,14 +150,21 @@ def main():
                         required=filename is None,
                         default=filename,
                         help='Specify where the image should be saved. If \''+STDOUT_FILENAME+'\' is specified, the image will be written to standard output.')
-    parser.add_argument('-v',
+    command_group = parser.add_mutually_exclusive_group(required=True)
+    command_group.add_argument('-v',
                         '--symbol-version',
                         type=int,
                         action='store',
                         dest='symbol_version',
-                        required=symbol_version is None,
                         default=symbol_version,
-                        help='The QR Code symbol version to use. See https://www.qrcode.com/en/about/version.html for details.')
+                        help='The QR Code symbol version to use. See https://www.qrcode.com/en/about/version.html for details. This option is mutually exclusive with "modules"')
+    command_group.add_argument('-a',
+                        '--modules',
+                        type=int,
+                        action='store',
+                        dest='modules',
+                        default=modules,
+                        help='The number of modules to use in each direction (horizontally and vertically). This option is mutually exclusive with "symbol version"')
     parser.add_argument('-d',
                         '--draw-fourth-edge',
                         action='store_true',
@@ -191,12 +201,12 @@ def main():
     margin = args.margin
     filename = args.filename
     symbol_version = args.symbol_version
+    modules = args.modules if symbol_version is None else symbol_version * 4 + 17
     draw_fourth_edge = args.draw_fourth_edge
     image_format = args.format
     foreground_pixel = parse_color(args.foreground, foreground_pixel)
     background_pixel = parse_color(args.background, background_pixel)
 
-    modules = symbol_version * 4 + 17
     margin_size = round(module_size * margin)
     size = margin_size * 2 + module_size * modules
     pixels = []
@@ -220,7 +230,7 @@ def main():
     if draw_fourth_edge:
         draw_dot(edge_position, edge_position, EDGE_MODULES, pixels, Direction.UP | Direction.LEFT)
 
-    if symbol_version > 1:
+    if modules >= 25:
         base_alignment_position = (modules - ALIGNMENT_PADDING - ALIGNMENT_MODULES) * module_size + margin_size
         alignment_padding_with_margin = margin_size + ALIGNMENT_PADDING * module_size
 
